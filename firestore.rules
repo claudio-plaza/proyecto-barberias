@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función para verificar si el usuario es el administrador específico
+    function isAdmin() {
+      return request.auth != null && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin" ||
+        request.auth.token.email == "claudioplaza92@gmail.com"
+      );
+    }
+
+    // Colección de Usuarios
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAdmin();
+    }
+
+    // Colección de Citas (Appointments)
+    match /appointments/{appointmentId} {
+      // Permitir crear a cualquiera (incluído invitados)
+      allow create: if true;
+      
+      // Solo el administrador o el dueño de la cita puede leer/borrar
+      allow read, write: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+    }
+
+    // Colección de Membresías
+    match /memberships/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isAdmin();
+    }
+
+    // Colección de Barberos (Staff)
+    match /barbers/{barberId} {
+      allow read: if true; // Cualquiera puede ver el staff para reservar
+      allow write: if isAdmin(); // Solo admin puede gestionar staff
+    }
+  }
+}
