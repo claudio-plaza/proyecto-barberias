@@ -66,7 +66,7 @@ export default function AdminPanel() {
 
     // Listen to Members (Users)
     const unsubMembers = onSnapshot(collection(db, "users"), (snapshot: QuerySnapshot) => {
-      const membersData = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({ id: doc.id, ...doc.data() } as UserProfile));
+      const membersData = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({ id: doc.id, ...doc.data() } as unknown as UserProfile));
       setMembers(membersData);
       setStats(prev => ({ ...prev, totalMembers: membersData.length }));
     });

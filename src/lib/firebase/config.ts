@@ -16,9 +16,9 @@ const isFirebaseConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
 // Initialize Firebase only if config is present
 let app: FirebaseApp | undefined;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
-let storage: FirebaseStorage | null = null;
+let auth: Auth = {} as Auth;
+let db: Firestore = {} as Firestore;
+let storage: FirebaseStorage = {} as FirebaseStorage;
 
 if (isFirebaseConfigured) {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
@@ -30,3 +30,4 @@ if (isFirebaseConfigured) {
 }
 
 export { app, auth, db, storage, isFirebaseConfigured };
+
